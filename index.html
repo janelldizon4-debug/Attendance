@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title> Attendance System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:linear-gradient(135deg, rgba(10,0,25,.9), rgba(0,10,30,.92));
+  color:#eaffff;
+}
+
+
+.container{
+  margin:14px;
+  padding:22px;
+  border-radius:26px;
+  background:rgba(8,8,20,.65);
+  border:1px solid rgba(0,255,255,.25);
+}
+
+
+h1{
+  text-align:center;
+  font-family:"Playfair Display",serif;
+  letter-spacing:3px;
+}
+h2{
+  text-align:center;
+  font-size:13px;
+  letter-spacing:4px;
+  color:#9befff;
+}
+
+
+label{
+  font-size:11px;
+  letter-spacing:1px;
+  color:#ff7cff;
+}
+
+input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  background:#000;
+  color:#eaffff;
+  border:1px solid #00eaff;
+}
+
+
+button{
+  width:100%;
+  padding:14px;
+  border-radius:28px;
+  font-family:"Playfair Display",serif;
+  letter-spacing:3px;
+  border:1px solid rgba(0,255,255,.6);
+  cursor:pointer;
+  background:
+    linear-gradient(120deg,#ff00cc,#00eaff,#ff00cc);
+  background-size:200% 100%;
+  color:#000;
+  transition:
+    background-position .6s ease,
+    transform .15s ease,
+    border-color .3s ease;
+}
+
+
+button:hover{
+  background-position:100% 0;
+  transform:translateY(-2px);
+  border-color:#00eaff;
+}
+
+
+button:active{
+  transform:translateY(0) scale(.97);
+}
+
+
+.btn-small{
+  padding:8px 14px;
+  font-size:12px;
+  letter-spacing:2px;
+}
+
+
+.log{margin-top:26px;}
+
+.log-table{
+  max-height:300px;
+  overflow-y:auto;
+  border-top:1px solid rgba(0,255,255,.25);
+}
+
+.log-row{
+  display:grid;
+  grid-template-columns:42px 110px 90px 90px 80px 90px 160px;
+  gap:6px;
+  padding:10px 8px;
+  font-size:12px;
+  border-bottom:1px solid rgba(0,255,255,.15);
+}
+
+.log-head{
+  font-weight:bold;
+  color:#9befff;
+  position:sticky;
+  top:0;
+  background:#000;
+}
+
+.status{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.status.present::before{
+  content:"✔";
+  color:#00ff99;
+}
+.status.absent::before{
+  content:"✖";
+  color:#ff4d4d;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>CAR PARKING MULTIPLAYER</h1>
+  <h2>CLUB ATTENDANCE SYSTEM</h2>
+
+  <label>NAME</label>
+  <input id="name">
+
+  <label>CPM ID</label>
+  <input id="cpm">
+
+  <label>DATE</label>
+  <input id="date" readonly>
+
+  <label>TIME</label>
+  <input id="time" readonly>
+
+  <label>ABSENT</label>
+  <input id="absent" placeholder="YES if absent">
+
+  <label>REASON</label>
+  <input id="reason">
+
+  <button onclick="confirmEntry()">CONFIRM</button>
+
+  <div class="log">
+    <h3>LIVE LOG</h3>
+
+    <div class="log-table">
+      <div class="log-row log-head">
+        <div></div>
+        <div>NAME</div>
+        <div>CPM</div>
+        <div>DATE</div>
+        <div>TIME</div>
+        <div>ABSENT</div>
+        <div>REASON</div>
+      </div>
+      <div id="logList"></div>
+    </div>
+
+    <button style="margin-top:12px" onclick="resetRecords()">RESET (ADMIN)</button>
+  </div>
+</div>
+
+<!-- ===== FIREBASE ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* 🔴 REPLACE WITH YOUR CONFIG */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+const dateInput = document.getElementById("date");
+const timeInput = document.getElementById("time");
+
+setInterval(()=>{
+  const now = new Date();
+  dateInput.value = now.toISOString().slice(0,10);
+  timeInput.value = now.toTimeString().slice(0,8);
+},1000);
+
+
+window.confirmEntry = function(){
+  const name = document.getElementById("name").value.trim();
+  const cpm = document.getElementById("cpm").value.trim();
+  const absent = document.getElementById("absent").value.trim().toUpperCase() || "NO";
+  const reason = document.getElementById("reason").value;
+
+  if(!name || !cpm){
+    alert("Name and CPM ID required");
+    return;
+  }
+
+  push(ref(db,"attendance"),{
+    name,
+    cpm,
+    date: dateInput.value,
+    time: timeInput.value,
+    absent,
+    reason
+  });
+
+  ["name","cpm","absent","reason"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+};
+
+
+const logList = document.getElementById("logList");
+
+onValue(ref(db,"attendance"), snap=>{
+  logList.innerHTML="";
+  const data = snap.val();
+  if(!data) return;
+
+  Object.values(data).reverse().forEach(r=>{
+    const row = document.createElement("div");
+    row.className="log-row";
+    row.innerHTML=`
+      <div class="status ${r.absent==="YES"?"absent":"present"}"></div>
+      <div>${r.name}</div>
+      <div>${r.cpm}</div>
+      <div>${r.date}</div>
+      <div>${r.time}</div>
+      <div>${r.absent}</div>
+      <div>${r.reason||""}</div>
+    `;
+    logList.appendChild(row);
+  });
+});
+
+
+window.resetRecords = function(){
+  const pass = prompt("Owner password:");
+  if(pass!=="cris123") return alert("Incorrect password");
+  if(confirm("Delete ALL attendance records?")){
+    remove(ref(db,"attendance"));
+  }
+};
+</script>
+
+</body>
+</html>
