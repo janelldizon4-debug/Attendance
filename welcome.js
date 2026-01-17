@@ -1,24 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const text = "Welcome to Velocity Society Club. I am your virtual assistant for today. Please choose your activity to continue.";
-  const display = document.getElementById("welcomeMsg");
-  const menu = document.getElementById("menuBtns");
+  const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+  const displayEl = document.getElementById("welcomeMsg");
+  const menuBtns = document.getElementById("menuBtns");
+  const contactMsg = document.getElementById("contactMsg");
+  const socialBtns = document.getElementById("socialBtns");
 
-  let i = 0;
-  display.innerHTML = "";
-  display.style.opacity = 1;
+  let charIndex = 0;
 
   function typeWriter() {
-    if (i < text.length) {
-      display.innerHTML += text.charAt(i);
-      i++;
-      setTimeout(typeWriter, 35);
+    if (charIndex < welcomeText.length) {
+      const char = welcomeText.charAt(charIndex);
+      displayEl.innerHTML += char;
+      charIndex++;
+      let delay = 25;
+      if (char === "," || char === ".") delay = 150;
+      setTimeout(typeWriter, delay);
     } else {
-      setTimeout(() => {
-        menu.style.display = "flex";
-        menu.style.opacity = 1;
-      }, 400);
+      // Show the buttons and messages after typing finishes
+      menuBtns.style.display = "flex";
+      contactMsg.style.display = "block";
+      socialBtns.style.display = "flex";
     }
   }
 
+  // Initialize
+  displayEl.innerHTML = "";
   typeWriter();
 });
