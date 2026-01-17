@@ -197,15 +197,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ===== Welcome typing animation =====
-const welcomeMsg = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+// ===== Smooth Typing Animation =====
+const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
 const displayEl = document.getElementById("welcomeMsg");
-let idx=0;
+let charIndex = 0;
 function typeWriter(){
-  if(idx<welcomeMsg.length){
-    displayEl.innerHTML += welcomeMsg.charAt(idx);
-    idx++;
-    setTimeout(typeWriter,30);
+  if(charIndex < welcomeText.length){
+    const char = welcomeText.charAt(charIndex);
+    displayEl.innerHTML += char;
+    charIndex++;
+    let delay = 25;
+    if(char === "," || char === ".") delay = 150;
+    setTimeout(typeWriter, delay);
   }else{
     document.getElementById("menuBtns").style.display="flex";
   }
@@ -215,7 +218,6 @@ typeWriter();
 // ===== Menu Selection =====
 function chooseActivity(act){
   if(act==="attendance"){
-    // Check if CPM is in member list
     const userCpm = prompt("Enter your CPM ID to access Attendance:");
     const isMember = members.some(m=>m.cpm===userCpm);
     if(!isMember){
@@ -303,7 +305,7 @@ window.resetRecords = function(){
   if(confirm("Delete ALL records?")) remove(ref(db,"attendance"));
 };
 
-// ===== Fill Up Form Functions =====
+// ===== Fill Up Form with image upload to Telegram =====
 function submitFillupForm(){
   const name = document.getElementById("fName").value.trim();
   const age  = document.getElementById("fAge").value;
@@ -313,32 +315,38 @@ function submitFillupForm(){
   const reason = document.getElementById("fReason").value.trim();
   const imageFile = document.getElementById("fImage").files[0];
 
-  if(!name || !age || !cpm || !ign || !role || !reason){
-    return alert("Please fill up all required fields.");
+  if(!name || !age || !cpm || !ign || !role || !reason || !imageFile){
+    return alert("Please fill up all required fields and upload an image.");
   }
 
-  const botMessage = `
-📌 *New Club Registration*
+  const BOT_TOKEN = "8389171340:AAH9WLzcrTzTUpNXIK3hmWso_mMMc_9jMB0"; // Replace
+  const CHAT_ID   = "6784382795";   // Replace
+
+  const caption = `
+📌 New Club Registration
 *Name:* ${name}
 *Age:* ${age}
 *CPM ID:* ${cpm}
 *IGN:* ${ign}
 *Role:* ${role}
 *Club Before & Reason:* ${reason}
-${imageFile ? `*Image:* ${imageFile.name}` : ''}
   `;
 
-  const BOT_TOKEN = "8389171340:AAH9WLzcrTzTUpNXIK3hmWso_mMMc_9jMB0"; // Replace
-  const CHAT_ID   = "6784382795";   // Replace
+  const formData = new FormData();
+  formData.append("chat_id", CHAT_ID);
+  formData.append("photo", imageFile);
+  formData.append("caption", caption);
+  formData.append("parse_mode", "Markdown");
 
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ chat_id:CHAT_ID, text:botMessage, parse_mode:"Markdown" })
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+    method: "POST",
+    body: formData
   })
   .then(res=>{
     alert("Thank you for joining! Please wait for approval.");
-    ["fName","fAge","fCpm","fIgn","fRole","fReason","fImage"].forEach(id=>document.getElementById(id).value="");
+    ["fName","fAge","fCpm","fIgn","fRole","fReason","fImage"].forEach(id=>{
+      document.getElementById(id).value="";
+    });
   })
   .catch(err=>{
     console.error(err);
