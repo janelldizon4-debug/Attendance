@@ -44,6 +44,7 @@ button:active{ transform:scale(.97); }
 .status.present::before{content:"✔";color:#00ff99}
 .status.absent::before{content:"✖";color:#ff4d4d}
 #welcomeMsg {
+#welcomeMsg {
   font-family: "Playfair Display", serif;
   font-size: 20px;
   text-align: center;
@@ -54,21 +55,21 @@ button:active{ transform:scale(.97); }
   min-height: 90px;
   transition: opacity .5s ease;
 
-  /* Gradient magic */
+  /* Dark Blue → Violet premium gradient */
   background: linear-gradient(
     135deg,
-    #9ffcff,
-    #6fdcff,
-    #3bbcff,
-    #9ffcff
+    #2b3cff,
+    #5a4bff,
+    #8b5cf6
   );
-  background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 
-  /* Premium glow */
-  text-shadow: 0 0 18px rgba(0, 200, 255, 0.25);
+  /* Subtle elite glow */
+  text-shadow:
+    0 0 14px rgba(90, 75, 255, 0.35),
+    0 0 30px rgba(139, 92, 246, 0.15);
 }
 
 #menuBtns{
