@@ -1,33 +1,36 @@
-
-const displayEl = document.getElementById("welcomeMsg");
-const menuEl = document.getElementById("menuBtns");
-
+// voice.js
 const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+const displayEl = document.getElementById("welcomeMsg");
+const menuBtns = document.getElementById("menuBtns");
 
+let charIndex = 0;
 
-const words = welcomeText.split(" ");
-let wordIndex = 0;
-let currentLine = "";
+// Use SpeechSynthesis for voice
+const synth = window.speechSynthesis;
+let utterance = new SpeechSynthesisUtterance(welcomeText);
+utterance.lang = "en-US";
+utterance.rate = 1; // speed
+utterance.pitch = 1;
 
-function typeWordWithVoice() {
-  if (wordIndex < words.length) {
-    const word = words[wordIndex];
-    currentLine += (currentLine === "" ? "" : " ") + word;
-    displayEl.innerHTML = currentLine;
+function typeWriter() {
+  if (charIndex < welcomeText.length) {
+    const char = welcomeText.charAt(charIndex);
+    displayEl.innerHTML += char;
+    charIndex++;
 
-    
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    utterance.rate = 1; // normal speed
-    speechSynthesis.speak(utterance);
+    // small delay per char
+    let delay = 25;
+    if (char === "," || char === ".") delay = 150;
 
-    wordIndex++;
-   
-    const delay = Math.max(50, word.length * 40); 
-    setTimeout(typeWordWithVoice, delay);
+    setTimeout(typeWriter, delay);
   } else {
-    if (menuEl) menuEl.style.display = "flex";
+    // show menu after typing
+    menuBtns.style.display = "flex";
   }
 }
 
-typeWordWithVoice();
+// Start typing animation
+typeWriter();
+
+// Start voice immediately
+synth.speak(utterance);
