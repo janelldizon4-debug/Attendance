@@ -1,36 +1,30 @@
-// voice.js
-const displayEl = document.getElementById("welcomeMsg");
-const menuBtns = document.getElementById("menuBtns");
-
 const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+const displayEl = document.getElementById("welcomeMsg");
+
+let wordIndex = 0;
+const words = welcomeText.split(" ");
+displayEl.innerHTML = "";
 
 const synth = window.speechSynthesis;
-const words = welcomeText.split(" "); // split text into words
-let wordIndex = 0;
-let typedText = "";
+const utter = new SpeechSynthesisUtterance(welcomeText);
+utter.rate = 1; // normal speed
+utter.pitch = 1;
 
-// Function to type and speak each word
-function typeAndSpeakWord() {
+// speak at the same time as typing word by word
+function typeAndSpeak() {
   if (wordIndex < words.length) {
-    const word = words[wordIndex];
-    typedText += word + " ";
-    displayEl.innerHTML = typedText;
-
-    // Speak this word
-    const utter = new SpeechSynthesisUtterance(word);
-    utter.lang = "en-US";
-    utter.rate = 1;
-    utter.pitch = 1;
-    synth.speak(utter);
-
+    displayEl.innerHTML += (wordIndex === 0 ? "" : " ") + words[wordIndex];
     wordIndex++;
-    // Adjust typing speed
-    const delay = 200; // ms between words
-    setTimeout(typeAndSpeakWord, delay);
+    setTimeout(typeAndSpeak, 250); // delay per word
   } else {
-    // Show menu buttons after finished
-    menuBtns.style.display = "flex";
+    document.getElementById("menuBtns").style.display = "flex";
   }
 }
 
-typeAndSpeakWord();
+// check if browser allows speech synthesis
+if (synth) {
+  synth.speak(utter);
+}
+
+// start typing animation
+typeAndSpeak();
