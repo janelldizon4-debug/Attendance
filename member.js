@@ -1,7 +1,7 @@
 export const members = [
-  { name: "cris",  cpm: "cris™" },
-  { name: "NOOB", cpm: "NOOB23" },
-  { name: "ENZO", cpm: "018377228" }
+  { name: "cris",  cpm: "crisgaming" },
+  { name: "", cpm: "" },
+  { name: "", cpm: "" }
 ];
 
 export const TOTAL_MEMBERS = members.length;
