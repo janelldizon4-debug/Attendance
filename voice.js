@@ -5,18 +5,22 @@ const menu = document.getElementById("menuBtns");
 let i = 0;
 let started = false;
 
-function startVoiceAndTyping() {
+function startAll() {
   if (started) return;
   started = true;
 
-  // Voice
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = "en-US";
-  utter.rate = 1;
-  utter.pitch = 1;
-  speechSynthesis.speak(utter);
+  // clear in case may laman na
+  display.innerHTML = "";
 
-  // Typing
+  // VOICE
+  const voice = new SpeechSynthesisUtterance(text);
+  voice.lang = "en-US";
+  voice.rate = 1;
+  voice.pitch = 1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(voice);
+
+  // TYPING
   function type() {
     if (i < text.length) {
       display.innerHTML += text.charAt(i);
@@ -30,6 +34,6 @@ function startVoiceAndTyping() {
   type();
 }
 
-// Required user interaction (browser policy)
-document.addEventListener("click", startVoiceAndTyping, { once: true });
-document.addEventListener("touchstart", startVoiceAndTyping, { once: true });
+// mobile + desktop unlock
+document.addEventListener("click", startAll, { once: true });
+document.addEventListener("touchstart", startAll, { once: true });
