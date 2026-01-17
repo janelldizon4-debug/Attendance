@@ -1,30 +1,35 @@
-const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
-const displayEl = document.getElementById("welcomeMsg");
+const text = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+const display = document.getElementById("welcomeMsg");
+const menu = document.getElementById("menuBtns");
 
-let wordIndex = 0;
-const words = welcomeText.split(" ");
-displayEl.innerHTML = "";
+let i = 0;
+let started = false;
 
-const synth = window.speechSynthesis;
-const utter = new SpeechSynthesisUtterance(welcomeText);
-utter.rate = 1; // normal speed
-utter.pitch = 1;
+function startVoiceAndTyping() {
+  if (started) return;
+  started = true;
 
-// speak at the same time as typing word by word
-function typeAndSpeak() {
-  if (wordIndex < words.length) {
-    displayEl.innerHTML += (wordIndex === 0 ? "" : " ") + words[wordIndex];
-    wordIndex++;
-    setTimeout(typeAndSpeak, 250); // delay per word
-  } else {
-    document.getElementById("menuBtns").style.display = "flex";
+  // Voice
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "en-US";
+  utter.rate = 1;
+  utter.pitch = 1;
+  speechSynthesis.speak(utter);
+
+  // Typing
+  function type() {
+    if (i < text.length) {
+      display.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(type, 30);
+    } else {
+      menu.style.display = "flex";
+    }
   }
+
+  type();
 }
 
-// check if browser allows speech synthesis
-if (synth) {
-  synth.speak(utter);
-}
-
-// start typing animation
-typeAndSpeak();
+// Required user interaction (browser policy)
+document.addEventListener("click", startVoiceAndTyping, { once: true });
+document.addEventListener("touchstart", startVoiceAndTyping, { once: true });
