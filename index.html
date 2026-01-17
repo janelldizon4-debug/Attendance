@@ -58,7 +58,15 @@ button{
 button:hover{ background-position:100% 0; transform:translateY(-2px);}
 button:active{ transform:scale(.97); }
 
-.menu-btns{ display:flex; justify-content:center; gap:12px; margin-bottom:20px;}
+.menu-btns{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  z-index:10;
+  pointer-events:auto;
+}
 
 .log{margin-top:26px;}
 .log-table{ max-height:300px; overflow-y:auto; border-top:1px solid rgba(0,255,255,.25);}
@@ -81,7 +89,11 @@ button:active{ transform:scale(.97); }
 <div class="container">
 
   <h1>VELOCITY SOCIETY CLUB</h1>
-  <h2 id="welcomeMsg"></h2>
+
+  <!-- Welcome -->
+  <div id="welcomeContainer">
+    <h2 id="welcomeMsg"></h2>
+  </div>
 
   <!-- Menu (hidden until welcome finished) -->
   <div class="menu-btns" id="menuBtns" style="display:none;">
@@ -210,7 +222,9 @@ function typeWriter(){
     if(char === "," || char === ".") delay = 150;
     setTimeout(typeWriter, delay);
   }else{
-    document.getElementById("menuBtns").style.display="flex";
+    const menu = document.getElementById("menuBtns");
+    menu.style.display="flex";
+    menu.style.pointerEvents="auto"; // Ensure clickable
   }
 }
 typeWriter();
