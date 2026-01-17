@@ -4,22 +4,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const menu = document.getElementById("menuBtns");
 
   let i = 0;
-  let started = false;
 
-  function startVoiceAndTyping() {
-    if (started) return;
-    started = true;
-
-    display.innerHTML = "";
-    menu.style.display = "none";
+  function speakAndType() {
+    window.speechSynthesis.cancel();
 
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
     utter.rate = 1;
     utter.pitch = 1;
-
-    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
+
+    display.innerHTML = "";
+    i = 0;
 
     function typeWriter() {
       if (i < text.length) {
@@ -34,7 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
     typeWriter();
   }
 
-  // Required user interaction (Android / Chrome rule)
-  document.body.addEventListener("click", startVoiceAndTyping, { once: true });
-  document.body.addEventListener("touchstart", startVoiceAndTyping, { once: true });
+  // Always require tap (browser rule)
+  function initVoice() {
+    speakAndType();
+    document.removeEventListener("click", initVoice);
+    document.removeEventListener("touchstart", initVoice);
+  }
+
+  document.addEventListener("click", initVoice);
+  document.addEventListener("touchstart", initVoice);
 });
