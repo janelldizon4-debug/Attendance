@@ -4,80 +4,23 @@
 <meta charset="UTF-8">
 <title>VSC Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 body{
-  margin:0;
-  font-family:"Poppins",sans-serif;
-  background:linear-gradient(135deg, rgba(10,0,25,.9), rgba(0,10,30,.92));
-  color:#eaffff;
+  margin:0; font-family:"Poppins",sans-serif; background:linear-gradient(135deg, #0a0019, #000a1e); color:#eaffff; text-align:center;
 }
-
-.container{
-  margin:14px;
-  padding:22px;
-  border-radius:26px;
-  background:rgba(8,8,20,.65);
-  border:1px solid rgba(0,255,255,.25);
-}
-
-h1,h2,h3,h4{ text-align:center; }
-
-h1{ font-family:"Playfair Display",serif; letter-spacing:3px; }
-h2{ font-size:13px; letter-spacing:4px; color:#9befff; min-height:50px; }
-label{ font-size:11px; letter-spacing:1px; color:#ff7cff; }
-
-input, select, textarea{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px;
-  margin-bottom:12px;
-  border-radius:8px;
-  background:#000;
-  color:#eaffff;
-  border:1px solid #00eaff;
-  font-size:16px;
-}
-textarea{ resize:none; }
-
-button{
-  width:100%;
-  padding:14px;
-  border-radius:28px;
-  font-family:"Playfair Display",serif;
-  letter-spacing:3px;
-  border:1px solid rgba(0,255,255,.6);
-  cursor:pointer;
-  background:linear-gradient(120deg,#ff00cc,#00eaff,#ff00cc);
-  background-size:200% 100%;
-  color:#000;
-  transition:background-position .6s ease,transform .15s ease;
-}
+.container{ margin:14px; padding:22px; border-radius:26px; background:rgba(8,8,20,.65); border:1px solid rgba(0,255,255,.25); }
+h1,h2,h3,h4{ margin:0; text-align:center; }
+h1{ font-family:"Playfair Display",serif; letter-spacing:3px; margin-bottom:10px;}
+h2{ font-size:14px; color:#9befff; margin-bottom:10px;}
+input, select, textarea{ width:100%; padding:10px; margin-bottom:12px; border-radius:8px; background:#000; color:#eaffff; border:1px solid #00eaff; font-size:16px; box-sizing:border-box;}
+textarea{ resize:none;}
+button{ width:100%; padding:12px; border-radius:28px; border:none; cursor:pointer; background:linear-gradient(120deg,#ff00cc,#00eaff,#ff00cc); background-size:200% 100%; color:#000; font-weight:bold; margin-bottom:10px; transition:0.3s;}
 button:hover{ background-position:100% 0; transform:translateY(-2px);}
-button:active{ transform:scale(.97); }
-
-.menu-btns{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:12px;
-  z-index:100;
-  pointer-events:auto;
-}
-
-.log{margin-top:26px;}
-.log-table{ max-height:300px; overflow-y:auto; border-top:1px solid rgba(0,255,255,.25);}
-.log-row{
-  display:grid;
-  grid-template-columns:40px 100px 80px 90px 80px 80px 140px;
-  gap:6px;
-  padding:8px;
-  font-size:12px;
-  border-bottom:1px solid rgba(0,255,255,.15);
-}
+.menu-btns{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:20px; z-index:10; }
+.log{margin-top:20px;}
+.log-table{ max-height:250px; overflow-y:auto; border-top:1px solid rgba(0,255,255,.25);}
+.log-row{ display:grid; grid-template-columns:40px 100px 80px 90px 80px 80px 140px; gap:6px; padding:8px; font-size:12px; border-bottom:1px solid rgba(0,255,255,.15);}
 .log-head{ font-weight:bold; color:#9befff; position:sticky; top:0; background:#000;}
 .status{ display:flex; justify-content:center; align-items:center;}
 .status.present::before{content:"✔";color:#00ff99}
@@ -86,135 +29,103 @@ button:active{ transform:scale(.97); }
 </head>
 <body>
 <div class="container">
+  <h1>VELOCITY SOCIETY CLUB</h1>
+  <h2 id="welcomeMsg" style="min-height:60px;"></h2>
 
-<h1>VELOCITY SOCIETY CLUB</h1>
+  <!-- Menu -->
+  <div class="menu-btns" id="menuBtns" style="display:none;">
+    <button onclick="chooseActivity('attendance')">Attendance</button>
+    <button onclick="chooseActivity('fillup')">Fill Up Form</button>
+  </div>
 
-<!-- Welcome -->
-<div id="welcomeContainer">
-  <h2 id="welcomeMsg"></h2>
-</div>
+  <!-- Attendance Section -->
+  <div id="attendanceSection" style="display:none;">
+    <label>NAME</label><input id="name">
+    <label>CPM ID</label><input id="cpm">
+    <label>DATE</label><input id="date" readonly>
+    <label>TIME</label><input id="time" readonly>
+    <label>ABSENT</label><input id="absent" placeholder="YES if absent">
+    <label>REASON</label><input id="reason">
+    <button onclick="confirmEntry()">CONFIRM</button>
 
-<!-- Menu (will appear after typing finishes) -->
-<div class="menu-btns" id="menuBtns" style="display:none;">
-  <button onclick="chooseActivity('attendance')">Attendance</button>
-  <button onclick="chooseActivity('fillup')">Fill Up Form</button>
-</div>
-
-<!-- Attendance Section -->
-<div id="attendanceSection" style="display:none;">
-  <label>NAME</label>
-  <input id="name">
-  <label>CPM ID</label>
-  <input id="cpm">
-  <label>DATE</label>
-  <input id="date" readonly>
-  <label>TIME</label>
-  <input id="time" readonly>
-  <label>ABSENT</label>
-  <input id="absent" placeholder="YES if absent">
-  <label>REASON</label>
-  <input id="reason">
-  <button onclick="confirmEntry()">CONFIRM</button>
-
-  <div class="log">
-    <div style="text-align:center;margin-bottom:12px">
-      <h3 id="countDisplay">0 / 0 Members</h3>
-      <h4 id="rateDisplay"></h4>
-    </div>
-    <div id="absentBox" style="margin-bottom:12px">
-      <strong>ABSENT MEMBERS:</strong>
-      <ul id="absentList" style="font-size:13px;margin-top:6px"></ul>
-    </div>
-    <h3>LIVE LOG</h3>
-    <div class="log-table">
-      <div class="log-row log-head">
-        <div></div>
-        <div>NAME</div>
-        <div>CPM</div>
-        <div>DATE</div>
-        <div>TIME</div>
-        <div>ABSENT</div>
-        <div>REASON</div>
+    <div class="log">
+      <div style="text-align:center;margin-bottom:12px">
+        <h3 id="countDisplay">0 / 0 Members</h3>
+        <h4 id="rateDisplay"></h4>
       </div>
-      <div id="logList"></div>
+      <div id="absentBox" style="margin-bottom:12px">
+        <strong>ABSENT MEMBERS:</strong>
+        <ul id="absentList" style="font-size:13px;margin-top:6px"></ul>
+      </div>
+      <h3>LIVE LOG</h3>
+      <div class="log-table">
+        <div class="log-row log-head">
+          <div></div><div>NAME</div><div>CPM</div><div>DATE</div><div>TIME</div><div>ABSENT</div><div>REASON</div>
+        </div>
+        <div id="logList"></div>
+      </div>
+      <button style="margin-top:12px" onclick="resetRecords()">RESET (ADMIN)</button>
     </div>
-    <button style="margin-top:12px" onclick="resetRecords()">RESET (ADMIN)</button>
+  </div>
+
+  <!-- Fill Up Form -->
+  <div id="fillupSection" style="display:none;">
+    <div style="text-align:center;margin-bottom:12px;">
+      <img loading="lazy" src="logo.png" alt="Club Logo" width="120">
+      <h2>Join Velocity Society Club</h2>
+    </div>
+    <label>Name</label><input id="fName" type="text">
+    <label>Age</label>
+    <select id="fAge"><option value="">Select Age</option></select>
+    <label>CPM ID</label><input id="fCpm" type="text">
+    <label>IGN</label><input id="fIgn" type="text">
+    <label>Role</label>
+    <select id="fRole">
+      <option value="">Select Role</option>
+      <option value="Photographer">Photographer</option>
+      <option value="Videographer">Videographer</option>
+      <option value="Editor">Editor</option>
+      <option value="Event Manager">Event Manager</option>
+    </select>
+    <label>Club Before & Reason</label><textarea id="fReason" rows="3"></textarea>
+    <label>Upload Image</label><input id="fImage" type="file" accept="image/*">
+    <button onclick="submitFillupForm()">Submit</button>
   </div>
 </div>
 
-<!-- Fill Up Form Section -->
-<div id="fillupSection" style="display:none;">
-  <div style="text-align:center;margin-bottom:12px;">
-    <img loading="lazy" src="logo.png" alt="Club Logo" width="120">
-    <h2>Join Velocity Society Club</h2>
-  </div>
+<script>
+// ===== Fill Age Dropdown =====
+for(let i=17;i<=50;i++){
+  const option = document.createElement("option");
+  option.value = i; option.text = i;
+  document.getElementById("fAge").appendChild(option);
+}
 
-  <label>Name</label><input id="fName" type="text">
-  <label>Age</label>
-  <select id="fAge"><option value="">Select Age</option></select>
-  <label>CPM ID</label><input id="fCpm" type="text">
-  <label>IGN</label><input id="fIgn" type="text">
-  <label>Role</label>
-  <select id="fRole">
-    <option value="">Select Role</option>
-    <option value="Photographer">Photographer</option>
-    <option value="Videographer">Videographer</option>
-    <option value="Editor">Editor</option>
-    <option value="Event Manager">Event Manager</option>
-  </select>
-  <label>Club Before & Reason</label><textarea id="fReason" rows="3"></textarea>
-  <label>Upload Image</label><input id="fImage" type="file" accept="image/*">
-  <button onclick="submitFillupForm()">Submit</button>
-</div>
-
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { members, TOTAL_MEMBERS } from "./member.js";
-
-const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  databaseURL: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// ===== Fill Age dropdown =====
-const ageSelect = document.getElementById("fAge");
-for(let i=17;i<=50;i++){ ageSelect.innerHTML += `<option value="${i}">${i}</option>`; }
-
-// ===== Typing animation =====
+// ===== Smooth Typing =====
 const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
-const displayEl = document.getElementById("welcomeMsg");
-let charIndex = 0;
+const display = document.getElementById("welcomeMsg");
+let i=0;
 function typeWriter(){
-  if(charIndex < welcomeText.length){
-    displayEl.innerHTML += welcomeText.charAt(charIndex);
-    charIndex++;
+  if(i < welcomeText.length){
+    display.innerHTML += welcomeText.charAt(i);
+    i++;
     let delay = 25;
-    if(",.".includes(welcomeText.charAt(charIndex-1))) delay=150;
+    if(",.".includes(welcomeText.charAt(i-1))) delay=150;
     setTimeout(typeWriter, delay);
   } else {
     document.getElementById("menuBtns").style.display="flex";
   }
 }
-typeWriter();
+window.onload = typeWriter;
 
-// ===== Menu Selection =====
+// ===== Menu Activity =====
 function chooseActivity(act){
   if(act==="attendance"){
     const userCpm = prompt("Enter your CPM ID to access Attendance:");
-    if(!members.some(m=>m.cpm===userCpm)){
-      alert("You are not a member. Please choose the correct activity.");
-      return;
-    }
+    // Fake members check for testing, replace with import from member.js
+    const members = [{cpm:"1234", name:"Antonette"}]; 
+    const isMember = members.some(m=>m.cpm===userCpm);
+    if(!isMember){ alert("You are not a member. Please choose the correct activity."); return; }
     document.getElementById("attendanceSection").style.display="block";
     document.getElementById("fillupSection").style.display="none";
   } else if(act==="fillup"){
@@ -223,62 +134,15 @@ function chooseActivity(act){
   }
 }
 
-// ===== Date & Time Auto-fill =====
+// ===== Attendance Auto Date/Time =====
 const dateInput = document.getElementById("date");
 const timeInput = document.getElementById("time");
 setInterval(()=>{
-  const now = new Date();
-  if(dateInput) dateInput.value = now.toISOString().slice(0,10);
-  if(timeInput) timeInput.value = now.toTimeString().slice(0,8);
+  if(dateInput) dateInput.value = new Date().toISOString().slice(0,10);
+  if(timeInput) timeInput.value = new Date().toTimeString().slice(0,8);
 },1000);
 
-// ===== Attendance functions =====
-window.confirmEntry = function(){
-  const name = document.getElementById("name").value.trim();
-  const cpm  = document.getElementById("cpm").value.trim();
-  if(!name || !cpm){ return alert("Name & CPM ID required"); }
-  if(!members.find(m=>m.cpm===cpm && m.name.toLowerCase()===name.toLowerCase())){
-    return alert("You are NOT a member");
-  }
-  const absent = document.getElementById("absent").value.trim().toUpperCase() || "NO";
-  const reason = document.getElementById("reason").value;
-  push(ref(db,"attendance"), {name,cpm,date:dateInput.value,time:timeInput.value,absent,reason});
-  ["name","cpm","absent","reason"].forEach(id=>document.getElementById(id).value="");
-};
-
-const logList = document.getElementById("logList");
-const countDisplay = document.getElementById("countDisplay");
-const rateDisplay  = document.getElementById("rateDisplay");
-const absentList = document.getElementById("absentList");
-
-onValue(ref(db,"attendance"), snap=>{
-  logList.innerHTML=""; absentList.innerHTML="";
-  const data = snap.val()||{};
-  const records = Object.values(data);
-  const presentCPM = new Set(records.filter(r=>r.absent!=="YES").map(r=>r.cpm));
-  countDisplay.innerText = `${presentCPM.size} / ${TOTAL_MEMBERS} Members`;
-  let rate="BAD";
-  if(presentCPM.size===TOTAL_MEMBERS) rate="COMPLETE 🎉";
-  else if(presentCPM.size>=TOTAL_MEMBERS*0.9) rate="VERY GOOD ✅";
-  else if(presentCPM.size>=TOTAL_MEMBERS*0.7) rate="GOOD 👍";
-  rateDisplay.innerText=rate;
-  members.forEach(m=>{ if(!presentCPM.has(m.cpm)){ const li=document.createElement("li"); li.textContent=`${m.name} (${m.cpm})`; absentList.appendChild(li);} });
-  records.reverse().forEach(r=>{
-    const row=document.createElement("div");
-    row.className="log-row";
-    row.innerHTML=`<div class="status ${r.absent==="YES"?"absent":"present"}"></div>
-    <div>${r.name}</div><div>${r.cpm}</div><div>${r.date}</div><div>${r.time}</div><div>${r.absent}</div><div>${r.reason||""}</div>`;
-    logList.appendChild(row);
-  });
-});
-
-window.resetRecords = function(){
-  const pass = prompt("Owner password:");
-  if(pass!=="cris123") return alert("Incorrect password");
-  if(confirm("Delete ALL records?")) remove(ref(db,"attendance"));
-};
-
-// ===== Fill Up Form with image upload to Telegram =====
+// ===== Fill Up Form submit to Telegram =====
 function submitFillupForm(){
   const name = document.getElementById("fName").value.trim();
   const age  = document.getElementById("fAge").value;
@@ -287,38 +151,30 @@ function submitFillupForm(){
   const role = document.getElementById("fRole").value;
   const reason = document.getElementById("fReason").value.trim();
   const imageFile = document.getElementById("fImage").files[0];
+  if(!name || !age || !cpm || !ign || !role || !reason || !imageFile){ return alert("Please fill all fields and upload an image."); }
 
-  if(!name || !age || !cpm || !ign || !role || !reason || !imageFile){
-    return alert("Please fill up all required fields and upload an image.");
-  }
+  const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // replace
+  const CHAT_ID   = "YOUR_CHAT_ID_HERE";   // replace
 
-  const BOT_TOKEN="YOUR_BOT_TOKEN";
-  const CHAT_ID="YOUR_CHAT_ID";
-
-  const caption = `
-📌 New Club Registration
+  const caption = `📌 New Club Registration
 *Name:* ${name}
 *Age:* ${age}
 *CPM ID:* ${cpm}
 *IGN:* ${ign}
 *Role:* ${role}
-*Club Before & Reason:* ${reason}
-  `;
+*Reason:* ${reason}`;
 
   const formData = new FormData();
-  formData.append("chat_id",CHAT_ID);
-  formData.append("photo",imageFile);
-  formData.append("caption",caption);
+  formData.append("chat_id", CHAT_ID);
+  formData.append("photo", imageFile);
+  formData.append("caption", caption);
   formData.append("parse_mode","Markdown");
 
   fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,{method:"POST",body:formData})
-    .then(res=>{
-      alert("Thank you for joining! Please wait for approval.");
-      ["fName","fAge","fCpm","fIgn","fRole","fReason","fImage"].forEach(id=>document.getElementById(id).value="");
-    })
-    .catch(err=>{console.error(err); alert("Failed to send data. Please try again.");});
+  .then(()=>{ alert("Thank you for joining! Please wait for approval.");
+    ["fName","fAge","fCpm","fIgn","fRole","fReason","fImage"].forEach(id=>document.getElementById(id).value="");})
+  .catch(err=>{ console.error(err); alert("Failed to send data. Try again."); });
 }
 </script>
-
 </body>
 </html>
