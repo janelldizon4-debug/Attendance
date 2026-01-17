@@ -43,6 +43,25 @@ button:active{ transform:scale(.97); }
 .status{display:flex;justify-content:center;align-items:center;}
 .status.present::before{content:"✔";color:#00ff99}
 .status.absent::before{content:"✖";color:#ff4d4d}
+  #welcomeMsg{
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  text-align: center;
+  line-height: 1.6;
+  margin: 20px auto 30px auto;
+  max-width: 420px;
+  color: #eaffff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(0,255,255,.25);
+  min-height: 90px;
+  transition: opacity .5s ease;
+}
+
+#menuBtns{
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .6s ease;
+}
 </style>
 </head>
 <body>
@@ -297,6 +316,6 @@ window.submitFillupForm = function(){
     });
 };
 </script>
-  <script type="module" src="voice.js"></script> 
+  <script type="module" src="welcome.js"></script> 
 </body>
 </html>
