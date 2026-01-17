@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
+  const welcomeText = "Hi! I'm your assistant for today to guide you through the (CLUB NAME) dashboard. Please choose your activity below.";
   const displayEl = document.getElementById("welcomeMsg");
   const menuBtns = document.getElementById("menuBtns");
 
