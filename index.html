@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Attendance System</title>
+<title>Attendance System & Club Registration</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
@@ -23,25 +23,14 @@ body{
   border:1px solid rgba(0,255,255,.25);
 }
 
-h1{
+h1,h2,h3,h4{
   text-align:center;
-  font-family:"Playfair Display",serif;
-  letter-spacing:3px;
-}
-h2{
-  text-align:center;
-  font-size:13px;
-  letter-spacing:4px;
-  color:#9befff;
 }
 
-label{
-  font-size:11px;
-  letter-spacing:1px;
-  color:#ff7cff;
-}
-
-input{
+h1{ font-family:"Playfair Display",serif; letter-spacing:3px;}
+h2{ font-size:13px; letter-spacing:4px; color:#9befff;}
+label{ font-size:11px; letter-spacing:1px; color:#ff7cff;}
+input, select, textarea{
   width:100%;
   box-sizing:border-box;
   padding:12px;
@@ -52,6 +41,7 @@ input{
   border:1px solid #00eaff;
   font-size:16px;
 }
+textarea{ resize:none; }
 
 button{
   width:100%;
@@ -66,23 +56,11 @@ button{
   color:#000;
   transition:background-position .6s ease,transform .15s ease;
 }
-
-button:hover{
-  background-position:100% 0;
-  transform:translateY(-2px);
-}
-button:active{
-  transform:scale(.97);
-}
+button:hover{ background-position:100% 0; transform:translateY(-2px);}
+button:active{ transform:scale(.97); }
 
 .log{margin-top:26px;}
-
-.log-table{
-  max-height:300px;
-  overflow-y:auto;
-  border-top:1px solid rgba(0,255,255,.25);
-}
-
+.log-table{ max-height:300px; overflow-y:auto; border-top:1px solid rgba(0,255,255,.25);}
 .log-row{
   display:grid;
   grid-template-columns:40px 100px 80px 90px 80px 80px 140px;
@@ -91,77 +69,125 @@ button:active{
   font-size:12px;
   border-bottom:1px solid rgba(0,255,255,.15);
 }
-
-.log-head{
-  font-weight:bold;
-  color:#9befff;
-  position:sticky;
-  top:0;
-  background:#000;
-}
-
-.status{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
+.log-head{ font-weight:bold; color:#9befff; position:sticky; top:0; background:#000;}
+.status{ display:flex; justify-content:center; align-items:center;}
 .status.present::before{content:"✔";color:#00ff99}
 .status.absent::before{content:"✖";color:#ff4d4d}
+
+/* Menu buttons */
+.menu-btns{ display:flex; justify-content:center; gap:12px; margin-bottom:20px;}
+.menu-btns button{ width:auto; padding:10px 18px; font-size:14px;}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-  <h1>CAR PARKING MULTIPLAYER</h1>
-  <h2>CLUB ATTENDANCE SYSTEM</h2>
+  <h1>VELOCITY SOCIETY CLUB</h1>
+  <h2>VSC CLUB DASHBOARD</h2>
 
-  <label>NAME</label>
-  <input id="name">
+  <!-- ===== MENU ===== -->
+  <div class="menu-btns">
+    <button onclick="showSection('attendanceSection')">Attendance</button>
+    <button onclick="showSection('fillupSection')">Fill Up Form</button>
+  </div>
 
-  <label>CPM ID</label>
-  <input id="cpm">
+  <!-- ===== Attendance Section ===== -->
+  <div id="attendanceSection">
+    <label>NAME</label>
+    <input id="name">
+    <label>CPM ID</label>
+    <input id="cpm">
+    <label>DATE</label>
+    <input id="date" readonly>
+    <label>TIME</label>
+    <input id="time" readonly>
+    <label>ABSENT</label>
+    <input id="absent" placeholder="YES if absent">
+    <label>REASON</label>
+    <input id="reason">
+    <button onclick="confirmEntry()">CONFIRM</button>
 
-  <label>DATE</label>
-  <input id="date" readonly>
-
-  <label>TIME</label>
-  <input id="time" readonly>
-
-  <label>ABSENT</label>
-  <input id="absent" placeholder="YES if absent">
-
-  <label>REASON</label>
-  <input id="reason">
-
-  <button onclick="confirmEntry()">CONFIRM</button>
-
-  <div class="log">
-    <h3>LIVE LOG</h3>
-
-    <div class="log-table">
-      <div class="log-row log-head">
-        <div></div>
-        <div>NAME</div>
-        <div>CPM</div>
-        <div>DATE</div>
-        <div>TIME</div>
-        <div>ABSENT</div>
-        <div>REASON</div>
+    <div class="log">
+      <div style="text-align:center;margin-bottom:12px">
+        <h3 id="countDisplay">0 / 0 Members</h3>
+        <h4 id="rateDisplay"></h4>
       </div>
-      <div id="logList"></div>
+
+      <div id="absentBox" style="margin-bottom:12px">
+        <strong>ABSENT MEMBERS:</strong>
+        <ul id="absentList" style="font-size:13px;margin-top:6px"></ul>
+      </div>
+
+      <h3>LIVE LOG</h3>
+      <div class="log-table">
+        <div class="log-row log-head">
+          <div></div>
+          <div>NAME</div>
+          <div>CPM</div>
+          <div>DATE</div>
+          <div>TIME</div>
+          <div>ABSENT</div>
+          <div>REASON</div>
+        </div>
+        <div id="logList"></div>
+      </div>
+
+      <button style="margin-top:12px" onclick="resetRecords()">RESET (ADMIN)</button>
+    </div>
+  </div>
+
+  <!-- ===== Fill Up Form Section ===== -->
+  <div id="fillupSection" style="display:none;">
+    <div style="text-align:center;margin-bottom:12px;">
+      <img loading="lazy" src="logo.png" alt="Club Logo" width="120">
+      <h2>Join Velocity Society Club</h2>
     </div>
 
-    <button style="margin-top:12px" onclick="resetRecords()">RESET (ADMIN)</button>
+    <label>Name</label>
+    <input id="fName" type="text">
+
+    <label>Age</label>
+    <select id="fAge">
+      <option value="">Select Age</option>
+      <script>
+        for(let i=17;i<=50;i++){
+          document.write(`<option value="${i}">${i}</option>`);
+        }
+      </script>
+    </select>
+
+    <label>CPM ID</label>
+    <input id="fCpm" type="text">
+
+    <label>IGN</label>
+    <input id="fIgn" type="text">
+
+    <label>Role</label>
+    <select id="fRole">
+      <option value="">Select Role</option>
+      <option value="Photographer">Photographer</option>
+      <option value="Videographer">Videographer</option>
+      <option value="Editor">Editor</option>
+      <option value="Event Manager">Event Manager</option>
+    </select>
+
+    <label>Club Before & Reason for Joining</label>
+    <textarea id="fReason" rows="3"></textarea>
+
+    <label>Upload Image</label>
+    <input id="fImage" type="file" accept="image/*">
+
+    <button onclick="submitFillupForm()">Submit</button>
   </div>
 </div>
 
-<!-- ===== FIREBASE ===== -->
+<!-- ===== FIREBASE & LOGIC ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { members, TOTAL_MEMBERS } from "./member.js";
 
-/* ✅ CORRECT FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyC2Qqjc4Z-za60nya2ANMOP6DwQQx5IoE",
   authDomain: "attendance-f8237.firebaseapp.com",
@@ -175,44 +201,59 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* AUTO DATE & TIME */
+// ===== Date & Time Auto-fill =====
 const dateInput = document.getElementById("date");
 const timeInput = document.getElementById("time");
-
 setInterval(()=>{
   const now = new Date();
   dateInput.value = now.toISOString().slice(0,10);
   timeInput.value = now.toTimeString().slice(0,8);
 },1000);
 
-/* CONFIRM */
+// ===== Attendance Functions =====
 window.confirmEntry = function(){
   const name = document.getElementById("name").value.trim();
-  const cpm = document.getElementById("cpm").value.trim();
-  if(!name || !cpm) return alert("Name & CPM ID required");
+  const cpm  = document.getElementById("cpm").value.trim();
+  if(!name || !cpm){ return alert("Name & CPM ID required"); }
+  const validMember = members.find(m => m.cpm === cpm && m.name.toLowerCase() === name.toLowerCase());
+  if(!validMember){ return alert("You are NOT a member"); }
 
   const absent = document.getElementById("absent").value.trim().toUpperCase() || "NO";
   const reason = document.getElementById("reason").value;
 
-  push(ref(db,"attendance"),{
-    name,cpm,
-    date:dateInput.value,
-    time:timeInput.value,
-    absent,reason
-  });
+  push(ref(db,"attendance"), { name, cpm, date: dateInput.value, time: timeInput.value, absent, reason });
 
-  ["name","cpm","absent","reason"].forEach(id=>document.getElementById(id).value="");
+  ["name","cpm","absent","reason"].forEach(id => document.getElementById(id).value="");
 };
 
-/* LIVE LOG */
 const logList = document.getElementById("logList");
+const countDisplay = document.getElementById("countDisplay");
+const rateDisplay  = document.getElementById("rateDisplay");
+const absentList = document.getElementById("absentList");
 
 onValue(ref(db,"attendance"), snap=>{
-  logList.innerHTML="";
-  const data = snap.val();
-  if(!data) return;
+  logList.innerHTML=""; absentList.innerHTML="";
+  const data = snap.val() || {};
+  const records = Object.values(data);
+  const presentCPM = new Set(records.filter(r => r.absent !== "YES").map(r => r.cpm));
+  const presentCount = presentCPM.size;
+  countDisplay.innerText = `${presentCount} / ${TOTAL_MEMBERS} Members`;
 
-  Object.values(data).reverse().forEach(r=>{
+  let rate = "BAD";
+  if(presentCount === TOTAL_MEMBERS) rate = "COMPLETE 🎉";
+  else if(presentCount >= TOTAL_MEMBERS * 0.9) rate = "VERY GOOD ✅";
+  else if(presentCount >= TOTAL_MEMBERS * 0.7) rate = "GOOD 👍";
+  rateDisplay.innerText = rate;
+
+  members.forEach(m=>{
+    if(!presentCPM.has(m.cpm)){
+      const li = document.createElement("li");
+      li.textContent = `${m.name} (${m.cpm})`;
+      absentList.appendChild(li);
+    }
+  });
+
+  records.reverse().forEach(r=>{
     const row = document.createElement("div");
     row.className="log-row";
     row.innerHTML=`
@@ -227,14 +268,71 @@ onValue(ref(db,"attendance"), snap=>{
   });
 });
 
-/* RESET */
 window.resetRecords = function(){
   const pass = prompt("Owner password:");
   if(pass!=="cris123") return alert("Incorrect password");
-  if(confirm("Delete ALL records?")){
-    remove(ref(db,"attendance"));
-  }
+  if(confirm("Delete ALL records?")) remove(ref(db,"attendance"));
 };
+
+// ===== Fill Up Form Functions =====
+function showSection(sectionId){
+  document.getElementById("attendanceSection").style.display = "none";
+  document.getElementById("fillupSection").style.display = "none";
+  document.getElementById(sectionId).style.display = "block";
+}
+
+function submitFillupForm(){
+  const name = document.getElementById("fName").value.trim();
+  const age  = document.getElementById("fAge").value;
+  const cpm  = document.getElementById("fCpm").value.trim();
+  const ign  = document.getElementById("fIgn").value.trim();
+  const role = document.getElementById("fRole").value;
+  const reason = document.getElementById("fReason").value.trim();
+  const imageFile = document.getElementById("fImage").files[0];
+
+  if(!name || !age || !cpm || !ign || !role || !reason){
+    return alert("Please fill up all required fields.");
+  }
+
+  const botMessage = `
+📌 *New Club Registration*
+*Name:* ${name}
+*Age:* ${age}
+*CPM ID:* ${cpm}
+*IGN:* ${ign}
+*Role:* ${role}
+*Club Before & Reason:* ${reason}
+${imageFile ? `*Image:* ${imageFile.name}` : ''}
+  `;
+
+  const BOT_TOKEN = "8389171340:AAH9WLzcrTzTUpNXIK3hmWso_mMMc_9jMB0"; // Replace with your bot token
+  const CHAT_ID   = "6784382795";   // Replace with your chat ID
+
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ chat_id:CHAT_ID, text:botMessage, parse_mode:"Markdown" })
+  })
+  .then(res=>{
+    alert("Thank you for joining! Please wait for approval.");
+    ["fName","fAge","fCpm","fIgn","fRole","fReason","fImage"].forEach(id=>document.getElementById(id).value="");
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("Failed to send data. Please try again.");
+  });
+}
+
+// ===== Restrict Attendance Access =====
+const attendanceSection = document.getElementById("attendanceSection");
+if(typeof members !== "undefined"){
+  const userCpm = prompt("Enter your CPM ID to access attendance:");
+  const validUser = members.some(m=>m.cpm===userCpm);
+  if(!validUser){
+    alert("You must be a registered member to access attendance.");
+    attendanceSection.style.display="none";
+  }
+}
 </script>
 
 </body>
