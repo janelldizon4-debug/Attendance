@@ -149,7 +149,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ===== Typing Animation =====
+
 const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
 const displayEl = document.getElementById("welcomeMsg");
 let charIndex = 0;
@@ -167,12 +167,12 @@ function typeWriter(){
 }
 typeWriter();
 
-// ===== Fill Age Dropdown =====
+
 for(let i=17;i<=50;i++){
   document.getElementById("fAge").innerHTML += `<option value="${i}">${i}</option>`;
 }
 
-// ===== Menu Selection =====
+
 window.chooseActivity = function(act){
   if(act === "attendance"){
     const userCpm = prompt("Enter your CPM ID:").trim();
@@ -190,7 +190,7 @@ window.chooseActivity = function(act){
   }
 };
 
-// ===== Date & Time Auto-fill =====
+
 const dateInput = document.getElementById("date");
 const timeInput = document.getElementById("time");
 setInterval(()=>{
@@ -199,7 +199,7 @@ setInterval(()=>{
   if(timeInput) timeInput.value = now.toTimeString().slice(0,8);
 },1000);
 
-// ===== Attendance Functions =====
+
 window.confirmEntry = function(){
   const name = document.getElementById("name").value.trim();
   const cpm  = document.getElementById("cpm").value.trim();
@@ -262,7 +262,7 @@ window.resetRecords = function(){
   if(confirm("Delete ALL records?")) remove(ref(db,"attendance"));
 };
 
-// ===== Fill Up Form with Image Upload to Telegram =====
+
 window.submitFillupForm = function(){
   const name = document.getElementById("fName").value.trim();
   const age  = document.getElementById("fAge").value;
