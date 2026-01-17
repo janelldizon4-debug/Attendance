@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const text = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
   const display = document.getElementById("welcomeMsg");
   const menu = document.getElementById("menuBtns");
@@ -7,11 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
   let i = 0;
   let started = false;
 
-  function speakAndType() {
+  function startVoiceAndTyping() {
     if (started) return;
     started = true;
 
     display.innerHTML = "";
+    menu.style.display = "none";
 
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "en-US";
@@ -21,21 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utter);
 
-    function type() {
+    function typeWriter() {
       if (i < text.length) {
         display.innerHTML += text.charAt(i);
         i++;
-        setTimeout(type, 30);
+        setTimeout(typeWriter, 30);
       } else {
         menu.style.display = "flex";
       }
     }
 
-    type();
+    typeWriter();
   }
 
-  // REQUIRED USER GESTURE
-  document.body.addEventListener("click", speakAndType, { once: true });
-  document.body.addEventListener("touchstart", speakAndType, { once: true });
-
+  // Required user interaction (Android / Chrome rule)
+  document.body.addEventListener("click", startVoiceAndTyping, { once: true });
+  document.body.addEventListener("touchstart", startVoiceAndTyping, { once: true });
 });
