@@ -150,22 +150,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 
-const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
-const displayEl = document.getElementById("welcomeMsg");
-let charIndex = 0;
-function typeWriter(){
-  if(charIndex < welcomeText.length){
-    const char = welcomeText.charAt(charIndex);
-    displayEl.innerHTML += char;
-    charIndex++;
-    let delay = 25;
-    if(char === "," || char === ".") delay = 150;
-    setTimeout(typeWriter, delay);
-  }else{
-    document.getElementById("menuBtns").style.display="flex";
-  }
-}
-typeWriter();
+
 
 
 for(let i=17;i<=50;i++){
