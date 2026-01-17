@@ -2,32 +2,38 @@
 const displayEl = document.getElementById("welcomeMsg");
 const menuBtns = document.getElementById("menuBtns");
 
+// The welcome message
 const welcomeText = "Hi! I'm your assistant for today to guide you through the Velocity Society Club dashboard. Please choose your activity below.";
 
-// Split text into words
-const words = welcomeText.split(" ");
-let wordIndex = 0;
-
+// Use SpeechSynthesis
 const synth = window.speechSynthesis;
 
-function typeWord() {
-  if (wordIndex < words.length) {
-    const word = words[wordIndex];
-    displayEl.innerHTML += (wordIndex === 0 ? "" : " ") + word;
-    
-    // Speak this word
-    let utter = new SpeechSynthesisUtterance(word);
-    utter.lang = "en-US";
-    utter.rate = 1;
-    utter.pitch = 1;
-    synth.speak(utter);
+// Split message into characters for typing effect
+let charIndex = 0;
 
-    wordIndex++;
-    // Delay based on word length
-    setTimeout(typeWord, 250 + word.length * 20);
+function typeAndSpeak() {
+  if (charIndex < welcomeText.length) {
+    const char = welcomeText.charAt(charIndex);
+    displayEl.innerHTML += char;
+    charIndex++;
+
+    // Only speak when a word boundary (space or punctuation)
+    if (char === " " || char === "." || char === "," || charIndex === welcomeText.length) {
+      const utter = new SpeechSynthesisUtterance(displayEl.innerText);
+      utter.lang = "en-US";
+      utter.rate = 1;
+      utter.pitch = 1;
+      synth.speak(utter);
+    }
+
+    // Small delay for smooth typing
+    let delay = 30;
+    if (char === "," || char === ".") delay = 200;
+    setTimeout(typeAndSpeak, delay);
   } else {
+    // Show menu buttons after typing finished
     menuBtns.style.display = "flex";
   }
 }
 
-typeWord();
+typeAndSpeak();
